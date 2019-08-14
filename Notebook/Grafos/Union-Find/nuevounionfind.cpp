@@ -1,79 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
-const ll MAX_NODES =  1000000;
-
-//vector<ll> nodes(MAX_NODES, 0);
-int altura[MAX_NODES+1];
-int padre[MAX_NODES+1];
-ll find(ll a)
+const int MAXNODOS = 1e6;
+struct uf
 {
-	vector<ll> pushes;
-	while(padre[a])
-	{
-		pushes.push_back(a);
-		a = padre[a];
 
-	}
-	int tam = pushes.size();
-	for(int i = 0; i < tam; i++) padre[pushes[i]] =a;
-	return a;
-}
-bool comprobar(ll a, ll b)
-{
-	return find(a) == find(b);
-}
-void conectar(ll a, ll b)
-{
-	if(!comprobar(a, b))
-	{
-		if(altura[a] > altura[b])
-		{
-			ll representante2 = find(a);
-			ll representante = find(b);
-			padre[representante] = a;
+    int altura[MAXNODOS+1];
+    int padre[MAXNODOS+1];
+    void init()
+    {
+        for(int i = 1; i <= MAXNODOS; i++)
+        {
+            altura[i] = 1;
+            padre[i] = i;
 
-			altura[representante2]+= altura[representante];
-		}
-		else
-		{
-			ll representante2 = find(b);
+        }
 
-			ll representante = find(a);
+    }
+    int find(int a)
+    {
+        int retValue = padre[a];
+        if(padre[a] != a)
+        {
+            retValue = find(padre[a]);
+        }
+        padre[a] = retValue;
+        //cout << "Actualizo el padre de (" << a << ") a (" << retValue << ")\n";
+        return retValue;
+    }
 
-			padre[representante] = b;
-			altura[representante2]+= (altura[representante2] - altura[representante]);
-		}
-	}
-}
+    bool comprobar(int a, int b)
+    {
+       return find(a) == find(b);
+    }
+    void conectar(int a, int b)
+    {
+        if(!comprobar(a, b))
+        {
+            a = find(a);
+            b = find(b);
+            if(altura[b] > altura[a])
+            {
+                swap(a, b);
+            }
+            padre[b]= a;
+            altura[a] += altura[b];
+        }
 
-int main()
-{
-	char opcion;
-	int a, b;
-	while(true)
-	{
-		cin >> opcion;
-		if(opcion != 'F')
-		{
-			if(opcion == 'C')
-			{
-				cin >> a>> b;
-				conectar(a, b);
-			}
-			else if(opcion == 'P')
-			{
-				cin >> a >> b;
-				cout << (comprobar(a,b) ? "S\n" : "N\n");
-			}
-		}
-		else
-		{
-			break;
-		}
-	}
-	return 0;
-}
-
-
-
+    }
+};
