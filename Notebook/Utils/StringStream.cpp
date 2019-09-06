@@ -8,3 +8,9 @@ while(getline(cin,strLine)){
         //lag
     }
 }
+
+//TwoForm
+std::string text = "123";
+int number;
+std::istringstream iss (text);
+iss >> number;
